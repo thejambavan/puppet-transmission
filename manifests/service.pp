@@ -53,8 +53,9 @@ class transmission::service {
       }
     }
   } else {
-    notify{"Not a systemd system, can't manage service or defaults file"}
+    notify{"Not a systemd system, can't manage service or defaults file": }
   }
+
   if $::transmission::service_ensure == 'running' {
     File <| title == "${config_dir}/settings.json.puppet" |> {
       notify => Exec['replace_transmission_config'],
