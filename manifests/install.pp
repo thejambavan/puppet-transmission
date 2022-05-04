@@ -33,7 +33,8 @@ class transmission::install {
     }
   }
 
-  package { ['transmission-cli','transmission-common','transmission-daemon']:
+  #package { ['transmission-cli','transmission-common','transmission-daemon']:
+  package { ['transmission-cli', 'transmission-daemon']:
     ensure  => present,
   }
 

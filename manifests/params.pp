@@ -32,7 +32,7 @@ class transmission::params {
   $rpc_url = regsubst($::transmission::rpc_url,'/$','')
 
   # TODO: replace with a case statement for different OSes
-  if $::transmission::home_dir != undef {
+  if $::transmission::home_dir {
     $home_dir = $::transmission::home_dir
   } else {
     if versioncmp($facts['os']['release']['full'],'16.04') >= 0 {
