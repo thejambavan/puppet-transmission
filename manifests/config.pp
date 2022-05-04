@@ -35,7 +35,7 @@ class transmission::config {
     group   => $::transmission::group,
     mode    => '0600',
     content => template('transmission/settings.json.erb'),
-    require => File['${config_dir}'],
+    require => File[$config_dir],
   }
 
   # == Transmission Home
