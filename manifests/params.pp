@@ -4,10 +4,21 @@ class transmission::params {
     'FreeBSD': {
       $config_prefix = '/usr/local/etc'
       $service_name = 'transmission'
+      $stop_cmd    = '/usr/sbin/service transmission stop'
+      $start_cmd   = '/usr/sbin/service transmission start'
     }
     'CentOS', 'Fedora', 'Debian', 'Ubuntu': {
       $config_prefix = '/etc'
       $service_name = 'transmission-daemon'
+      if versioncmp($facts['os']['release']['full'],'16.04') >= 0 {
+        $use_systemd = true
+        $stop_cmd    = '/bin/systemctl stop transmission-daemon'
+        $start_cmd   = '/bin/systemctl start transmission-daemon'
+      } else {
+        $use_systemd = false
+        $stop_cmd    = '/usr/sbin/service transmission-daemon stop'
+        $start_cmd   = '/usr/sbin/service transmission-daemon start'
+      }
     }
     default: {
       warning("Unsupported Platform: ${facts['os']['name']}, Using /etc")
@@ -16,10 +27,11 @@ class transmission::params {
     }
   }
 
- $config_dir = "${config_prefix}/${service_name}"
+  $config_dir = "${config_prefix}/${service_name}"
 
   $rpc_url = regsubst($::transmission::rpc_url,'/$','')
 
+  # TODO: replace with a case statement for different OSes
   if $::transmission::home_dir != undef {
     $home_dir = $::transmission::home_dir
   } else {
@@ -41,16 +53,6 @@ class transmission::params {
     "${download_root}/${::transmission::incomplete_dir}",
     "${download_root}/${::transmission::watch_dir}"
     ])
-
-    if versioncmp($facts['os']['release']['full'],'16.04') >= 0 {
-      $use_systemd = true
-      $stop_cmd    = '/bin/systemctl stop transmission-daemon'
-      $start_cmd   = '/bin/systemctl start transmission-daemon'
-    } else {
-      $use_systemd = false
-      $stop_cmd    = '/usr/sbin/service transmission-daemon stop'
-      $start_cmd   = '/usr/sbin/service transmission-daemon start'
-    }
 
     if $::transmission::rpc_bind_address != '0.0.0.0' {
       $rpc_bind = $::transmission::rpc_bind_address
