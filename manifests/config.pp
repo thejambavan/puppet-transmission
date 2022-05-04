@@ -17,9 +17,11 @@
 #
 class transmission::config {
 
+  $config_dir = $::transmission::params::config_dir
+
   # == Transmission config
 
-  file { '/etc/transmission-daemon':
+  file { $config_dir:
     ensure  => 'directory',
     owner   => $::transmission::owner,
     group   => $::transmission::group,
@@ -27,13 +29,13 @@ class transmission::config {
     require => Package['transmission-daemon'],
   }
 
-  file { '/etc/transmission-daemon/settings.json.puppet':
+  file { "${config_dir}/settings.json.puppet":
     ensure  => 'file',
     owner   => $::transmission::owner,
     group   => $::transmission::group,
     mode    => '0600',
     content => template('transmission/settings.json.erb'),
-    require => File['/etc/transmission-daemon'],
+    require => File['${config_dir}'],
   }
 
   # == Transmission Home
@@ -66,7 +68,7 @@ class transmission::config {
 
   file { "${::transmission::params::home_dir}/settings.json":
     ensure  => 'link',
-    target  => '/etc/transmission-daemon/settings.json',
+    target  => "${config_dir}/settings.json",
     require => File[$::transmission::params::home_dir],
   }
 
@@ -76,7 +78,8 @@ class transmission::config {
   cron { 'transmission_update_blocklist':
     ensure  => $::transmission::params::cron_ensure,
     command => "${::transmission::params::remote_command} --blocklist-update > /dev/null",
-    require => Package['transmission-cli','transmission-common','transmission-daemon'],
+    #require => Package['transmission-cli','transmission-common','transmission-daemon'],
+    require => Package['transmission-cli','transmission-daemon'],
     user    => 'root',
     minute  => '0',
     hour    => '*',

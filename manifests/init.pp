@@ -10,6 +10,7 @@
 # === Authors:
 #
 # Craig Watson <craig@cwatson.org>
+# Seth Tuntall <seth@tunstall.in>
 #
 # === Copyright:
 #
@@ -96,10 +97,6 @@ class transmission (
   String                 $watch_dir                      = 'watched',
   Boolean                $watch_dir_enabled              = false,
 ) {
-
-  if $facts['os']['family'] != 'Debian' {
-    fail "Your osfamily (${facts[os][family]}) is not supported by this module"
-  }
 
   include ::transmission::params
   include ::transmission::install

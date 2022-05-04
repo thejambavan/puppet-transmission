@@ -19,10 +19,17 @@
 #
 class transmission::install {
 
-  if $::transmission::manage_ppa {
-    apt::ppa { 'ppa:transmissionbt/ppa': }
-    Package {
-      require => Apt::Ppa['ppa:transmissionbt/ppa']
+  case $facts['os']['name'] {
+    'Ubuntu': {
+      if $::transmission::manage_ppa {
+        apt::ppa { 'ppa:transmissionbt/ppa': }
+        Package {
+          require => Apt::Ppa['ppa:transmissionbt/ppa']
+        }
+      }
+    }
+    default: {
+      warning("Unsupported Platform: ${facts['os']['name']}, Can't use PPA")
     }
   }
 
