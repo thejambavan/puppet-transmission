@@ -75,8 +75,8 @@ class transmission::service {
     }
   } else {
     service { 'transmission-daemon':
-      ensure => $::transmission::service_ensure,
-      enable => $::transmission::service_enable,
+      ensure => "running",
+      enable => true,
     }
   }
 }
