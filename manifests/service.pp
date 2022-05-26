@@ -68,10 +68,15 @@ class transmission::service {
       require => Exec['replace_transmission_config'],
     }
   }
-
-  service { 'transmission-daemon':
-    ensure => $::transmission::service_ensure,
-    enable => $::transmission::service_enable,
+  if $facts['service_provider'] == 'freebsd' {
+    service { 'transmission':
+      ensure => $::transmission::service_ensure,
+      enable => $::transmission::service_enable,
+    }
+  } else {
+    service { 'transmission-daemon':
+      ensure => $::transmission::service_ensure,
+      enable => $::transmission::service_enable,
+    }
   }
-
 }
